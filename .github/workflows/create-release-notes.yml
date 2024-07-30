@@ -13,7 +13,6 @@ on:
 jobs:
   create_notes:
     runs-on: ubuntu-latest
-    environment: prod
     strategy:
       matrix:
         node-version: [16.x]
@@ -23,7 +22,7 @@ jobs:
         env:
           TAG: ${{ inputs.tag }}
         with:
-          github-token: "${{ secrets.GHE_ACCESS_TOKEN }}"
+          github-token: ${{ secrets.GHE_ACCESS_TOKEN }}
           script: |
             try {
 

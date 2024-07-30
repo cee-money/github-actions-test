@@ -4,7 +4,7 @@ on: workflow_dispatch
 
 jobs:
   format_release_notes:
-    runs-on: comcast-runner
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code

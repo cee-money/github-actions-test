@@ -1,0 +1,35 @@
+name: TRIGGER_RELEASE_CI
+
+on:
+  pull_request_target:
+    branches: ['main']
+    types:
+      - 'closed'
+    paths:
+      - 'package.json'
+
+jobs:
+  create_release_tag:
+    if: |
+      github.event.pull_request.head.ref == 'new-release' && 
+      github.event.pull_request.merged  == true
+    runs-on: comcast-runner
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GHE_ACCESS_TOKEN }}
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.base.ref }}
+
+      - name: Create tag
+        run: |
+          PACKAGE_VERSION=$(cat package.json \
+          | grep version \
+          | head -1 \
+          | awk -F: '{ print $2 }' \
+          | sed 's/[",]//g')
+
+          SEMVER=$(echo ${PACKAGE_VERSION})
+          TAG_NAME=release/${SEMVER}
+          git tag ${TAG_NAME}
+          git push origin ${TAG_NAME} --no-verify

@@ -1,0 +1,14 @@
+name: RELEASE_TAG_CI
+
+on: create
+
+jobs:
+  create_release_notes:
+    if: |
+      github.event.ref_type == 'tag' &&
+      startsWith(github.event.ref, 'release') == true
+    uses: ./.github/workflows/create-release-notes.yml
+    with:
+      tag: {{ needs.set_vars.outputs.git_tag }}
+    secrets:
+      GHE_ACCESS_TOKEN: ${secrets.GHE_ACCESS_TOKEN}

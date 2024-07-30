@@ -44,7 +44,7 @@ jobs:
   
   format_release_notes:
     runs-on: comcast-runner
-    needs: create_notes
+    needs: [create_notes]
     steps:
       - name: Get notes and set body as var
         id: release

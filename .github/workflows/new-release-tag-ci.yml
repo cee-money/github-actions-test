@@ -3,10 +3,38 @@ name: RELEASE_TAG_CI
 on: create
 
 jobs:
-  create_release_notes:
+  set_vars:
     if: |
-      github.event.ref_type == 'tag' &&
-      startsWith(github.event.ref, 'release') == true
+        github.event.ref_type == 'tag' &&
+        startsWith(github.event.ref, 'release') == true
+    runs-on: comcast-runner
+    outputs:
+      git_tag: ${{ steps.vars.outputs.git_tag }}
+      run_number: ${{ steps.vars.outputs.run_number }}
+      build_link: ${{ steps.vars.outputs.build_link }}
+      deployment_link: ${{ steps.vars.outputs.deployment_link }}
+    steps:
+      - name: Checkout to release tag
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GHE_ACCESS_TOKEN }}
+          ref: ${{ github.event.ref }}
+          fetch-depth: 0
+
+      - name: Setup git config and env vars
+        id: vars
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+          REF_NAME=${{ github.event.ref }}
+          GIT_TAG=$(echo ${REF_NAME} | cut -d '/' -f2)
+          echo "git_tag=${GIT_TAG}" >> $GITHUB_OUTPUT
+          echo "run_number=${GITHUB_RUN_NUMBER}" >> $GITHUB_OUTPUT
+          echo "build_link=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_OUTPUT
+          echo "deployment_link=https://thrive-portal-${{ needs.get_app_flavor.outputs.inactive }}.eps.xfinity.com" >> $GITHUB_OUTPUT
+
+  create_release_notes:
+    needs: [set_vars]
     uses: ./.github/workflows/create-release-notes.yml
     with:
       tag: {{ needs.set_vars.outputs.git_tag }}

@@ -7,7 +7,7 @@ jobs:
     if: |
         github.event.ref_type == 'tag' &&
         startsWith(github.event.ref, 'release') == true
-    runs-on: comcast-runner
+    runs-on: ubuntu-latest
     outputs:
       git_tag: ${{ steps.vars.outputs.git_tag }}
       run_number: ${{ steps.vars.outputs.run_number }}

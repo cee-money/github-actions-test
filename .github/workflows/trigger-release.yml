@@ -13,7 +13,7 @@ jobs:
     if: |
       github.event.pull_request.head.ref == 'new-release' && 
       github.event.pull_request.merged  == true
-    runs-on: comcast-runner
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:

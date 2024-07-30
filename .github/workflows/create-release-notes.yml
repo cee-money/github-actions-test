@@ -12,7 +12,7 @@ on:
         required: true
 jobs:
   create_notes:
-    runs-on: comcast-runner
+    runs-on: ubuntu-latest
     environment: prod
     strategy:
       matrix:
@@ -43,7 +43,7 @@ jobs:
             }
   
   format_release_notes:
-    runs-on: comcast-runner
+    runs-on: ubuntu-latest
     needs: [create_notes]
     steps:
       - name: Get notes and set body as var
